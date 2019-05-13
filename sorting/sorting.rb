@@ -5,59 +5,59 @@ ARRAY = [15,9,8,1,4,11,7,12,13,16]
 BIG = (1..1000).to_a.shuffle
 
 def insertion_sort(arr)
-	len = arr.length
-	(1..len-1).each do |idx|
-		insert(arr, idx, arr[idx])
-	end
+  len = arr.length
+  (1..len-1).each do |idx|
+    insert(arr, idx, arr[idx])
+  end
 
-	return arr
+  return arr
 end
 
 def insert(arr, pos, value)
-	i = pos - 1
-	while i >= 0 and arr[i] > value do
-		arr[i+1] = arr[i]
-		i = i - 1
+  i = pos - 1
+  while i >= 0 and arr[i] > value do
+    arr[i+1] = arr[i]
+    i = i - 1
     end
     arr[i+1] = value
 end
 
 def selection_sort(arr)
-	len = arr.length
-	(len-1).downto(1) do |idx|
-		max_pos = select(arr, idx)
+  len = arr.length
+  (len-1).downto(1) do |idx|
+    max_pos = select(arr, idx)
         arr[max_pos], arr[idx] = arr[idx], arr[max_pos]
-	end
+  end
 
     return arr
 end
 
 def select(arr, pos)
-	max_pos = 0
-	(1..pos).each do |idx|
-		max_pos = idx if arr[idx] > arr[max_pos]
-	end
+  max_pos = 0
+  (1..pos).each do |idx|
+    max_pos = idx if arr[idx] > arr[max_pos]
+  end
     return max_pos
 end
 
 def heap_sort(arr)
-	build_heap(arr)
-	(arr.length-1).downto(1)  do |idx|
-		arr[0],arr[idx]=arr[idx],arr[0]
-		heapify(arr,0,idx)
-	end
+  build_heap(arr)
+  (arr.length-1).downto(1)  do |idx|
+    arr[0],arr[idx]=arr[idx],arr[0]
+    heapify(arr,0,idx)
+  end
 
-	return arr
+  return arr
  end
 
 def build_heap(arr)
-	(arr.length/2-1).downto(0) do |idx|
-		heapify(arr,idx, arr.length)
-	end
+  (arr.length/2-1).downto(0) do |idx|
+    heapify(arr,idx, arr.length)
+  end
 end
 
 def heapify(arr,pos,max)
-	largest = pos
+  largest = pos
     left = 2*pos+1
     right = 2*pos+2
 
@@ -65,14 +65,14 @@ def heapify(arr,pos,max)
     largest = right if right < max and arr[right] > arr[largest] 
 
     if largest != pos 
-    	arr[pos], arr[largest] = arr[largest], arr[pos]
-    	heapify(arr, largest, max)
+      arr[pos], arr[largest] = arr[largest], arr[pos]
+      heapify(arr, largest, max)
     end
 end
 
-def quick_sort(arr)
-	len = arr.length
-	return arr if len < 2
+def merge_sort(arr)
+  len = arr.length
+  return arr if len < 2
     
     pivot = arr[len/2-1]
     less = arr[1..len].reduce([]) {|res, el| el < pivot ? res.push(el) : res }
@@ -80,6 +80,36 @@ def quick_sort(arr)
 
     quick_sort(less) + [pivot] + quick_sort(greater)
 end
+
+def quick_sort(arr)
+  quicksort(arr, 0, arr.length - 1)
+  return arr
+end
+
+def quicksort(arr, left, right)
+  return if left >= right
+
+  pivot = arr[(left+right)/2]
+  index = partition(arr, left, right, pivot)
+  quicksort(arr, left, index -1)
+  quicksort(arr, index, right)
+end
+
+def partition(arr, left, right, pivot)
+  while left <= right do
+    while arr[left] < pivot do left += 1 end
+    while arr[right] > pivot do right -= 1 end
+
+    if left <= right
+      arr[left],arr[right]=arr[right],arr[left]
+      left += 1
+      right -= 1
+    end
+  end
+
+  return left
+end
+p quick_sort(ARRAY)
 
 Benchmark.ips do |b|
   b.config(:time => 3, :warmup => 2)
